@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import url('https://fonts.googleapis.com/css2?family=Righteous&display=swap');
+
+body {
+  font-family: 'Righteous', cursive;
+  background-color: #0c134f;
+}
+
+.background {
+  background-color: #1d267d;
+}
+
+.backgrounds {
+  background-color: #5c469c;
+}
+
+button {
+  background-color: #d4adfc;
+}
