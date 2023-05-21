@@ -1,19 +1,29 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import '../App.css';
 import Button from '../components/Button';
+import { db } from '../store/firebase-config';
+import { addDoc, collection } from '@firebase/firestore';
 
 const Auth = () => {
-  const [name, setName] = useState('');
-  const [address, setAddress] = useState('');
-  const [number, setNumber] = useState('');
+  const firstnameRef = useRef(null);
+  const othernameRef = useRef(null);
+  const addressRef = useRef(null);
+  const numberRef = useRef(null);
+
+  const customersCollection = collection(db, 'customers');
 
   let faceio;
   useEffect(() => {
-    faceio = new faceIO('fioad7a7');
+    faceio = new faceIO('fioa94f4');
   }, [faceio]);
 
   const handleSignUp = async (e) => {
     e.preventDefault();
+
+    const enteredFirstname = firstnameRef.current.value;
+    const enteredOthername = othernameRef.current.value;
+    const enteredAddress = addressRef.current.value;
+    const enteredNumber = numberRef.current.value;
 
     faceio
       .enroll({
@@ -33,27 +43,23 @@ const Auth = () => {
         // );
         console.log(userInfo);
 
-        fetch(
-          'https://atm-project-e9197-default-rtdb.firebaseio.com/customers.json',
-          {
-            method: 'POST',
-            body: JSON.stringify({
-              customers: {
-                id: userInfo.facialId,
-                fullname: name,
-                address: address,
-                phone_number: number,
-              },
-            }),
-          }
-        );
+        addDoc(customersCollection, {
+          imageId: userInfo.facialId,
+          firstname: enteredFirstname,
+          othername: enteredOthername,
+          address: enteredAddress,
+          phone_number: enteredNumber,
+        });
       })
       .catch((errCode) => {
         document.location.reload();
         console.log(errCode);
       });
 
-    setName(''), setAddress(''), setNumber('');
+    firstnameRef.current.value = '';
+    othernameRef.current.value = '';
+    addressRef.current.value = '';
+    numberRef.current.value = '';
   };
 
   return (
@@ -62,16 +68,28 @@ const Auth = () => {
 
       <form onSubmit={handleSignUp} className='space-y-5 my-5'>
         <div>
-          <label htmlFor='fullname' className='text-white'>
-            Fullname:
+          <label htmlFor='firstname' className='text-white'>
+            Firstname:
           </label>
           <br />
           <input
-            name='fullname'
+            ref={firstnameRef}
+            name='firstname'
             type='text'
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder='Enter Fullname'
+            placeholder='Enter Firstname'
+            className='p-2 w-full'
+          />
+        </div>
+        <div>
+          <label htmlFor='Othername' className='text-white'>
+            Othername:
+          </label>
+          <br />
+          <input
+            ref={othernameRef}
+            name='Othername'
+            type='text'
+            placeholder='Enter Othername'
             className='p-2 w-full'
           />
         </div>
@@ -81,10 +99,9 @@ const Auth = () => {
           </label>
           <br />
           <input
+            ref={addressRef}
             name='address'
             type='text'
-            value={address}
-            onChange={(e) => setAddress(e.target.value)}
             placeholder='Enter Address'
             className='p-2 w-full'
           />
@@ -95,10 +112,9 @@ const Auth = () => {
           </label>
           <br />
           <input
+            ref={numberRef}
             name='number'
             type='number'
-            value={number}
-            onChange={(e) => setNumber(e.target.value)}
             placeholder='Enter Phone number'
             className='p-2 w-full'
           />

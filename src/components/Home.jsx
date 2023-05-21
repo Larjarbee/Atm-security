@@ -1,26 +1,38 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 // import img from '../../assets/nacomes.jfif';
 import Button from './Button';
 import { Link } from 'react-router-dom';
 import Card from './Card';
+import { collection, getDocs } from '@firebase/firestore';
+import { db } from '../store/firebase-config';
+import { useParams } from 'react-router-dom';
 
-const Home = ({ enteredEmailRef }) => {
-  const email = enteredEmailRef;
+const Home = () => {
+  const { id } = useParams();
+
+  const [customer, setCustomer] = useState([]);
+
+  const customersCollection = collection(db, 'customers');
 
   useEffect(() => {
     const fetchCustomer = async () => {
-      const res = await fetch(
-        'https://atm-project-e9197-default-rtdb.firebaseio.com/customers.json'
-      );
-      const data = await res.json();
-      console.log(data);
+      const data = await getDocs(customersCollection);
+      setCustomer(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     };
 
     fetchCustomer();
   }, []);
+
+  const customerDetail = customer?.find((detail) => detail.imageId === id);
+
   return (
     <Card>
-      <h1 className=' text-2xl mb-5 text-white'>WELCOME: {email}</h1>
+      <h5 className='mb-5 text-white'>
+        WELCOME:
+        <span className='pl-3 font-bold text-4xl '>
+          {customerDetail?.firstname}
+        </span>
+      </h5>
       <div className='background flex justify-between rounded-2xl'>
         <div className='p-10 w-[40%] my-auto space-y-20'>
           <div className='flex items-center gap-5'>

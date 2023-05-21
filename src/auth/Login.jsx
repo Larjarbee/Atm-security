@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import '../App.css';
 import Button from '../components/Button';
 import Card from '../components/Card';
-// import img from '../../assets/nacomes.jfif';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -11,7 +10,7 @@ const Login = () => {
 
   let faceio;
   useEffect(() => {
-    faceio = new faceIO('fioad7a7');
+    faceio = new faceIO('fioa94f4');
   }, [faceio]);
 
   const handleLogIn = async () => {
