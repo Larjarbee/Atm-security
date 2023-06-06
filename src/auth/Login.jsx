@@ -3,10 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import '../App.css';
 import Button from '../components/Button';
 import Card from '../components/Card';
+import { useDispatch } from 'react-redux';
+import { authActions } from '../store/AuthSlice';
 
 const Login = () => {
   const navigate = useNavigate();
   const [showUI, setShowUI] = useState(true);
+
+  const dispatch = useDispatch()
 
   let faceio;
   useEffect(() => {
@@ -23,6 +27,7 @@ const Login = () => {
       console.log(` Unique Facial ID: ${response.facialId}
           PayLoad: ${response.payload.email}
           `);
+      dispatch(authActions.setFaceId(response.facialId))
       navigate(`/home/${response.facialId}`);
     } catch (error) {
       document.location.reload();

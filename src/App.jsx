@@ -4,6 +4,7 @@ import Authpage from './auth/Auth';
 import Login from './auth/Login';
 import Balance from './components/Balance';
 import Withdraw from './components/Withdraw';
+import Deposit from './components/Deposit';
 
 function App() {
   const router = createBrowserRouter([
@@ -18,6 +19,10 @@ function App() {
     {
       path: '/withdraw',
       element: <Withdraw />,
+    },
+    {
+      path: '/deposit',
+      element: <Deposit />,
     },
     {
       path: '/auth',

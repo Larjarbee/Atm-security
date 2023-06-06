@@ -6,9 +6,12 @@ import Card from './Card';
 import { collection, getDocs } from '@firebase/firestore';
 import { db } from '../store/firebase-config';
 import { useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { authActions } from '../store/AuthSlice';
 
 const Home = () => {
   const { id } = useParams();
+  const dispatch = useDispatch()
 
   const [customer, setCustomer] = useState([]);
 
@@ -23,14 +26,15 @@ const Home = () => {
     fetchCustomer();
   }, []);
 
-  const customerDetail = customer?.find((detail) => detail.imageId === id);
+  const customerDetail = customer ?.find((detail) => detail.imageId === id);
+  dispatch(authActions.balance(customerDetail ?.balance))
 
   return (
     <Card>
       <h5 className='mb-5 text-white'>
         WELCOME:
         <span className='pl-3 font-bold text-4xl '>
-          {customerDetail?.firstname}
+          {customerDetail ?.firstname}
         </span>
       </h5>
       <div className='background flex justify-between rounded-2xl'>
@@ -45,7 +49,7 @@ const Home = () => {
           </div>
           <div className='flex items-center gap-5'>
             <Button>
-              <Link to='/withdraw'>
+              <Link to='/deposit'>
                 <span class='material-symbols-outlined'>paid</span>
               </Link>
             </Button>
