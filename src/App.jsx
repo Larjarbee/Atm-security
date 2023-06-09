@@ -1,16 +1,54 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Home from './components/Home';
-import Authpage from './auth/Auth';
-import Login from './auth/Login';
-import Balance from './components/Balance';
-import Withdraw from './components/Withdraw';
-import Deposit from './components/Deposit';
+import { collection, getDocs, doc, updateDoc } from '@firebase/firestore';
+import { useState, useEffect, lazy, Suspense } from 'react';
+import { db } from './store/firebase-config';
+import img from './assets/img.jpg'
+
+const Home = lazy(() => import('./components/Home'))
+const Balance = lazy(() => import('./components/Balance'))
+const Withdraw = lazy(() => import('./components/Withdraw'))
+const Deposit = lazy(() => import('./components/Deposit'))
+const Authpage = lazy(() => import('./auth/Auth'))
+const Login = lazy(() => import('./auth/Login'))
 
 function App() {
+  const [customer, setCustomer] = useState([]);
+  const [amount, setAmount] = useState(0);
+  const [amountDeposit, setAmountDeposit] = useState(0);
+  const [loading, setLoading] = useState(false)
+
+  const month = new Date().toLocaleString('en-US', { month: 'long' });
+  const day = new Date().toLocaleString('en-US', { day: '2-digit' });
+  const year = new Date().getFullYear();
+
+
+  const customersCollection = collection(db, 'customers');
+
+  useEffect(() => {
+    setLoading(true)
+    const fetchCustomer = async () => {
+      const data = await getDocs(customersCollection);
+      setCustomer(data.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    };
+    setLoading(false)
+    fetchCustomer();
+  }, []);
+
+  const updateAmount = async (id, balance) => {
+    const customerDoc = doc(db, 'customers', id);
+    const newAmount = { balance: balance - +amount };
+    await updateDoc(customerDoc, newAmount)
+  }
+  const updateAmountDeposit = async (id, balance) => {
+    const customerDoc = doc(db, 'customers', id);
+    const newAmount = { balance: balance + +amountDeposit };
+    await updateDoc(customerDoc, newAmount)
+  }
+
   const router = createBrowserRouter([
     {
       path: '/home/:id',
-      element: <Home />,
+      element: <Home customer={customer} loading={loading} />,
     },
     {
       path: '/balance',
@@ -18,11 +56,11 @@ function App() {
     },
     {
       path: '/withdraw',
-      element: <Withdraw />,
+      element: <Withdraw updateAmount={updateAmount} customer={customer} amount={amount} setAmount={setAmount} />,
     },
     {
       path: '/deposit',
-      element: <Deposit />,
+      element: <Deposit updateAmountDeposit={updateAmountDeposit} customer={customer} amountDeposit={amountDeposit} setAmountDeposit={setAmountDeposit} />,
     },
     {
       path: '/auth',
@@ -35,7 +73,23 @@ function App() {
   ]);
   return (
     <div>
-      <RouterProvider router={router} />
+      <Suspense fallback={<p>Loading...</p>}>
+        <div className='mt-1 flex justify-around'>
+          <div className='flex items-center'>
+            <div><img src={img} alt='img' width={80} /></div>
+            <div className='text-white font-bold text-2xl'>
+              <h1>NACOMES</h1>
+              <h1>BANK</h1>
+            </div>
+          </div>
+          <div className='expense-date'>
+            <div className='expense-date__month'>{month}</div>
+            <div className='expense-date__year'>{year}</div>
+            <div className='expense-date__day'>{day}</div>
+          </div>
+        </div>
+        <RouterProvider router={router} />
+      </Suspense>
     </div>
   );
 }
