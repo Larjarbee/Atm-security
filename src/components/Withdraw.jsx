@@ -1,28 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Button from './Button';
 import { useDispatch, useSelector } from 'react-redux';
 import { authActions } from '../store/AuthSlice';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Card from './Card';
 
-const Withdraw = ({ updateAmount, customer, amount, setAmount }) => {
+const Withdraw = ({ updateAmount, customer }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const [error, setError] = useState(false);
   const balance = useSelector((state) => state.auth.amount);
   const id = localStorage.getItem('imageId')
+  const amountWithdrawalRef = useRef(0)
 
   const customerDetail = customer ?.find((detail) => detail.imageId === id);
 
   const submitFormHandler = (e) => {
     e.preventDefault();
 
+    const amount = amountWithdrawalRef.current.value;
+
     if (amount > balance) {
       setError(true)
       return;
     }
 
-    dispatch(authActions.enteredAmount(amount));
+    dispatch(authActions.enteredWithdrawalAmount(amount));
     dispatch(authActions.deductBalance(amount));
 
   };
@@ -45,8 +47,7 @@ const Withdraw = ({ updateAmount, customer, amount, setAmount }) => {
             <input
               type='number'
               min='1'
-              value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              ref={amountWithdrawalRef}
               className='p-2'
             />
             <br />

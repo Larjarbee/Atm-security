@@ -1,22 +1,25 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import Button from './Button';
 import { useDispatch } from 'react-redux';
 import { authActions } from '../store/AuthSlice';
-import { useNavigate, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import Card from './Card';
 
-const Deposit = ({ updateAmountDeposit, customer, amountDeposit, setAmountDeposit }) => {
+const Deposit = ({ updateAmountDeposit, customer }) => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const id = localStorage.getItem('imageId')
+  const amountDepositRef = useRef(0)
+
 
   const customerDetail = customer ?.find((detail) => detail.imageId === id);
 
   const submitFormHandler = (e) => {
     e.preventDefault();
 
-    dispatch(authActions.increaseBalance(amountDeposit));
+    const amountDeposit = amountDepositRef.current.value;
 
+    dispatch(authActions.enteredDepositAmount(amountDeposit));
+    dispatch(authActions.increaseBalance(amountDeposit));
   };
 
   return (
@@ -27,8 +30,7 @@ const Deposit = ({ updateAmountDeposit, customer, amountDeposit, setAmountDeposi
           <input
             type='number'
             min='1'
-            value={amountDeposit}
-            onChange={(e) => setAmountDeposit(e.target.value)}
+            ref={amountDepositRef}
             className='p-2'
           />
           <br />

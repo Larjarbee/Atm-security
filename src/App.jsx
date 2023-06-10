@@ -1,8 +1,9 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { collection, getDocs, doc, updateDoc } from '@firebase/firestore';
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense, useRef } from 'react';
 import { db } from './store/firebase-config';
 import img from './assets/img.jpg'
+import { useSelector } from 'react-redux';
 
 const Home = lazy(() => import('./components/Home'))
 const Balance = lazy(() => import('./components/Balance'))
@@ -13,9 +14,11 @@ const Login = lazy(() => import('./auth/Login'))
 
 function App() {
   const [customer, setCustomer] = useState([]);
-  const [amount, setAmount] = useState(0);
-  const [amountDeposit, setAmountDeposit] = useState(0);
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
+
+  const amount = useSelector((state) => state.auth.enteredWithdrawalAmount)
+  const amountDeposit = useSelector((state) => state.auth.enteredDepositAmount)
+  console.log(amount)
 
   const month = new Date().toLocaleString('en-US', { month: 'long' });
   const day = new Date().toLocaleString('en-US', { day: '2-digit' });
@@ -56,11 +59,11 @@ function App() {
     },
     {
       path: '/withdraw',
-      element: <Withdraw updateAmount={updateAmount} customer={customer} amount={amount} setAmount={setAmount} />,
+      element: <Withdraw updateAmount={updateAmount} customer={customer} />,
     },
     {
       path: '/deposit',
-      element: <Deposit updateAmountDeposit={updateAmountDeposit} customer={customer} amountDeposit={amountDeposit} setAmountDeposit={setAmountDeposit} />,
+      element: <Deposit updateAmountDeposit={updateAmountDeposit} customer={customer} />,
     },
     {
       path: '/auth',

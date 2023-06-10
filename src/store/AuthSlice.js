@@ -5,17 +5,21 @@ export const authSlice = createSlice({
   initialState: {
     amount: 0,
     faceId: '',
-    enteredAmount: 0
+    enteredWithdrawalAmount: 0,
+    enteredDepositAmount: 0,
   },
   reducers: {
     balance(state, action) {
       state.amount = action.payload;
     },
-    enteredAmount(state, action) {
-      state.enteredAmount = action.payload;
+    enteredWithdrawalAmount(state, action) {
+      state.enteredWithdrawalAmount = +action.payload;
+    },
+    enteredDepositAmount(state, action) {
+      state.enteredDepositAmount = +action.payload;
     },
     deductBalance(state, action) {
-      state.amount = state.amount - action.payload;
+      state.amount = state.amount - +action.payload;
     },
     increaseBalance(state, action) {
       state.amount = state.amount + +action.payload;
