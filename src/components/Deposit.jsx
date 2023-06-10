@@ -1,52 +1,82 @@
-import React, { useRef } from 'react';
+import React, { useState } from 'react';
 import Button from './Button';
-import { useDispatch } from 'react-redux';
-import { authActions } from '../store/AuthSlice';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import Card from './Card';
+import { useFetch } from '../hooks/useCustomer';
 
-const Deposit = ({ updateAmountDeposit, customer }) => {
-  const dispatch = useDispatch();
-  const id = localStorage.getItem('imageId')
-  const amountDepositRef = useRef(0)
+const Deposit = () => {
+  const id = localStorage.getItem('imageId');
+  const [msg, setMsg] = useState(false);
+  const navigate = useNavigate();
 
+  const { amountDeposit, setAmountDeposit, customer, updateAmountDeposit } =
+    useFetch();
 
-  const customerDetail = customer ?.find((detail) => detail.imageId === id);
+  const customerDetail = customer?.find((detail) => detail.imageId === id);
 
   const submitFormHandler = (e) => {
     e.preventDefault();
 
-    const amountDeposit = amountDepositRef.current.value;
+    setMsg(true);
+    setAmountDeposit(0);
+  };
 
-    dispatch(authActions.enteredDepositAmount(amountDeposit));
-    dispatch(authActions.increaseBalance(amountDeposit));
+  const homeHandler = () => {
+    navigate(`/home/${id}`);
+    document.location.reload();
+  };
+  const authHandler = () => {
+    localStorage.removeItem('imageId');
+    navigate('/login');
+    document.location.reload();
   };
 
   return (
     <Card>
-      <div className='background py-10'>
-        <h5 className='mb-5 text-white text-center'>Please Enter The Amount</h5>
-        <form onSubmit={submitFormHandler} className='text-center space-y-5'>
-          <input
-            type='number'
-            min='1'
-            ref={amountDepositRef}
-            className='p-2'
-          />
-          <br />
-          <div className='flex justify-center space-x-5'>
-            <Button>
-              <Link to={`/home/${id}`}>
-                Cancel
-              </Link>
-            </Button>
-            <Button onClick={() => updateAmountDeposit(customerDetail ?.id, customerDetail ?.balance)}>
-              Enter
-            </Button>
-          </div>
+      {!msg && (
+        <div className='background py-10'>
+          <h5 className='mb-5 text-white text-center'>
+            Please Enter The Amount
+          </h5>
+          <form onSubmit={submitFormHandler} className='text-center space-y-5'>
+            <input
+              type='number'
+              min='1'
+              value={amountDeposit}
+              onChange={(e) => setAmountDeposit(e.target.value)}
+              className='p-2'
+            />
+            <br />
+            <div className='flex justify-center space-x-5'>
+              <Button>
+                <Link to={`/home/${id}`}>Cancel</Link>
+              </Button>
+              <Button
+                onClick={() =>
+                  updateAmountDeposit(
+                    customerDetail?.id,
+                    customerDetail?.balance
+                  )
+                }
+              >
+                Enter
+              </Button>
+            </div>
+          </form>
+        </div>
+      )}
+      {msg && (
+        <div className='text-center backgrounds w-2/3 mx-auto rounded-lg p-5'>
+          <h3 className='mb-5 text-white'>
+            Transaction Successful. Did you want to perform another transaction?
+          </h3>
 
-        </form>
-      </div>
+          <div className='flex justify-center space-x-5'>
+            <Button onClick={homeHandler}>Yes</Button>
+            <Button onClick={authHandler}>No</Button>
+          </div>
+        </div>
+      )}
     </Card>
   );
 };

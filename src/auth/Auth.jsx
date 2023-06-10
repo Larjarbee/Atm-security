@@ -49,6 +49,7 @@ const Auth = () => {
           othername: enteredOthername,
           address: enteredAddress,
           phone_number: enteredNumber,
+          balance: 0,
         });
       })
       .catch((errCode) => {

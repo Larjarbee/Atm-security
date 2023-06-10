@@ -23,11 +23,11 @@ const Login = () => {
       console.log(` Unique Facial ID: ${response.facialId}
           PayLoad: ${response.payload.email}
           `);
-      localStorage.setItem('imageId', response.facialId)
+      localStorage.setItem('imageId', response.facialId);
       navigate(`/home/${response.facialId}`);
-      // document.location.reload()
+      document.location.reload();
     } catch (error) {
-      // document.location.reload();
+      document.location.reload();
       console.log(error);
     }
   };
