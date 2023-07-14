@@ -1,10 +1,12 @@
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
 import img from './assets/img.jpg';
+import LoadingSpinner from './components/Loading';
 
 const Home = lazy(() => import('./components/Home'));
 const Balance = lazy(() => import('./components/Balance'));
 const Withdraw = lazy(() => import('./components/Withdraw'));
+const Transfer = lazy(() => import('./components/Transfer'));
 const Deposit = lazy(() => import('./components/Deposit'));
 const Authpage = lazy(() => import('./auth/Auth'));
 const Login = lazy(() => import('./auth/Login'));
@@ -28,6 +30,10 @@ function App() {
       element: <Withdraw />,
     },
     {
+      path: '/transfer',
+      element: <Transfer />,
+    },
+    {
       path: '/deposit',
       element: <Deposit />,
     },
@@ -42,7 +48,7 @@ function App() {
   ]);
   return (
     <div>
-      <Suspense fallback={<p>Loading...</p>}>
+      <Suspense fallback={<div className='centered'><LoadingSpinner /></div>}>
         <div className='mt-1 flex justify-around'>
           <div className='flex items-center'>
             <div>

@@ -12,7 +12,7 @@ const Deposit = () => {
   const { amountDeposit, setAmountDeposit, customer, updateAmountDeposit } =
     useFetch();
 
-  const customerDetail = customer?.find((detail) => detail.imageId === id);
+  const customerDetail = customer ?.find((detail) => detail.imageId === id);
 
   const submitFormHandler = (e) => {
     e.preventDefault();
@@ -36,7 +36,7 @@ const Deposit = () => {
       {!msg && (
         <div className='background py-10'>
           <h5 className='mb-5 text-white text-center'>
-            Please Enter The Amount
+            Please Enter Amount To Deposit
           </h5>
           <form onSubmit={submitFormHandler} className='text-center space-y-5'>
             <input
@@ -54,8 +54,8 @@ const Deposit = () => {
               <Button
                 onClick={() =>
                   updateAmountDeposit(
-                    customerDetail?.id,
-                    customerDetail?.balance
+                    customerDetail ?.id,
+                    customerDetail ?.balance
                   )
                 }
               >
